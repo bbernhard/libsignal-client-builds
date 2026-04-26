@@ -100,15 +100,17 @@ jobs:
       - name: Create a new release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ inputs.version }}
         run: |
           gh release create \
             --target ${{ inputs.version }} \
-            --title "Version ${{ inputs.version }}" \
+            --title "Version ${TAG_NAME}" \
             --notes "Produced by GitHub actions run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
-            ${{ inputs.version }}
+            "$TAG_NAME" 
       - name: Create archive
         run: cd $GITHUB_WORKSPACE/assets && tar -czvf libsignal-client-build-${{ inputs.version }}.tar.gz .
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ inputs.version }} $GITHUB_WORKSPACE/assets/libsignal-client-build-${{ inputs.version }}.tar.gz
+          TAG_NAME: ${{ inputs.version }}
+        run: gh release upload "$TAG_NAME" "${GITHUB_WORKSPACE}/assets/libsignal-client-build-${TAG_NAME}.tar.gz"
