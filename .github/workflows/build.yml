@@ -97,3 +97,18 @@ jobs:
           echo "Start build"
           /home/runner/.cargo/bin/cross build --target aarch64-unknown-linux-gnu --release -p libsignal-jni
           cp target/aarch64-unknown-linux-gnu/release/libsignal_jni.so $GITHUB_WORKSPACE/assets/arm64
+      - name: Create a new release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create \
+            --target ${{ inputs.version }} \
+            --title "Version ${{ inputs.version }}" \
+            --notes "Produced by GitHub actions run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            ${{ inputs.version }}
+      - name: Create archive
+        run: cd $GITHUB_WORKSPACE/assets && tar -czvf libsignal-client-build-${{ inputs.version }}.tar.gz .
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ inputs.version }} $GITHUB_WORKSPACE/assets/libsignal-client-build-${{ inputs.version }}.tar.gz
