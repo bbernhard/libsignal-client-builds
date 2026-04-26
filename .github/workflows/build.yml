@@ -22,7 +22,7 @@ jobs:
           gh release create \
             --target ${{ inputs.version }} \
             --title "Version ${{ inputs.version }}" \
-            -- target_commitish master \
+            --target_commitish master \
             --notes "Produced by GitHub actions run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
             ${{ inputs.version }}
       - name: Set up Docker Buildx
