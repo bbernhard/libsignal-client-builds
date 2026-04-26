@@ -1,4 +1,4 @@
-name: ci
+name: build
 
 on:
   workflow_dispatch:
@@ -17,10 +17,11 @@ jobs:
         uses: docker/setup-buildx-action@v4
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Install rust
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      #- name: Install rust
+      #  run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
       - name: Install cross (from git revision 65fe72b)
-        run: . "$HOME/.cargo/env" && cargo install cross --git https://github.com/cross-rs/cross --rev 65fe72b
+        #run: . "$HOME/.cargo/env" && cargo install cross --git https://github.com/cross-rs/cross --rev 65fe72b
+        run: cargo install cross --git https://github.com/cross-rs/cross --rev 65fe72b
       - name: Clone libsignal repository
         run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/signalapp/libsignal
       - name: Free up disk space
