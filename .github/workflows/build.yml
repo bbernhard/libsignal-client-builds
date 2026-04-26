@@ -73,4 +73,4 @@ jobs:
           ls -la  /root/.cargo/bin/
           echo "Start build"
           docker run --privileged --rm tonistiigi/binfmt --install all
-          ~/.cargo/bin/cross build --target x86_64-unknown-linux-gnu --release -p libsignal-jni
+          /home/runner/.cargo/bin/cross build --target x86_64-unknown-linux-gnu --release -p libsignal-jni
