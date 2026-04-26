@@ -107,7 +107,7 @@ jobs:
           /home/runner/.cargo/bin/cross build --target aarch64-unknown-linux-gnu --release -p libsignal-jni
           cp target/aarch64-unknown-linux-gnu/release/libsignal_jni.so $GITHUB_WORKSPACE/assets/arm64
       - name: Create archive
-        run: cd $GITHUB_WORKSPACE/assets && tar -czvf libsignal-client-build-${{ inputs.version }}.tar.gz .
+        run: cd $GITHUB_WORKSPACE/assets && tar -czvf libsignal-client-build-${{ inputs.version }}.tar.gz x86-64 arm64 armv7
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
