@@ -18,11 +18,11 @@ jobs:
       - name: Create a new release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: ${{ inputs.version }} 
         run: |
           gh release create \
             --target ${{ inputs.version }} \
             --title "Version ${{ inputs.version }}" \
+            -- target_commitish master \
             --notes "Produced by GitHub actions run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
             ${{ inputs.version }}
       - name: Set up Docker Buildx
@@ -112,5 +112,4 @@ jobs:
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: ${{ inputs.version }}
-        run: gh release upload "$TAG_NAME" "${GITHUB_WORKSPACE}/assets/libsignal-client-build-${TAG_NAME}.tar.gz"
+        run: gh release upload ${{ inputs.version }} "${GITHUB_WORKSPACE}/assets/libsignal-client-build-${{ inputs.version }}.tar.gz"
