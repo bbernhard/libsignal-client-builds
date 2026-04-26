@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'     
+        required: true
+
+jobs:
+  build:
+    #runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    #needs: setup
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Install rust
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      - name: Install cross (from git revision 65fe72b)
+        run: . "$HOME/.cargo/env" && cargo install cross --git https://github.com/cross-rs/cross --rev 65fe72b
+      - name: Clone libsignal repository
+        run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/signalapp/libsignal
+      - name: Free up disk space
+        run: |
+          # Remove Java (JDKs)
+          sudo rm -rf /usr/lib/jvm
+
+          # Remove .NET SDKs
+          sudo rm -rf /usr/share/dotnet
+
+          # Remove Swift toolchain
+          sudo rm -rf /usr/share/swift
+
+          # Remove Haskell (GHC)
+          sudo rm -rf /usr/local/.ghcup
+
+          # Remove Julia
+          sudo rm -rf /usr/local/julia*
+
+          # Remove Android SDKs
+          sudo rm -rf /usr/local/lib/android
+
+          # Remove Chromium
+          sudo rm -rf /usr/local/share/chromium
+
+          # Remove Microsoft/Edge and Google Chrome builds
+          sudo rm -rf /opt/microsoft /opt/google
+
+          # Remove Azure CLI
+          sudo rm -rf /opt/az
+
+          # Remove PowerShell
+          sudo rm -rf /usr/local/share/powershell
+
+          # Remove CodeQL and other toolcaches
+          #sudo rm -rf /opt/hostedtoolcache
+
+          #docker system prune -af || true
+          #docker builder prune -af || true
+          df -h
+      - name: Build
+        env:
+          VERSION: ${{ github.run_number }}
+        run: |
+          df -h
+          echo "Change into libsignal directory"
+          cd $GITHUB_WORKSPACE/libsignal
+          pwd
+          ls -la  /root/.cargo/bin/
+          echo "Start build"
+          docker run --privileged --rm tonistiigi/binfmt --install all
+          ~/.cargo/bin/cross build --target x86_64-unknown-linux-gnu --release -p libsignal-jni
